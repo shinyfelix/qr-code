@@ -1,5 +1,11 @@
 package version;
 
+import utils.Binary;
+import utils.EmptyQrCodeCell;
+import utils.Pair;
+import utils.QRCodePlacer;
+
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -7,11 +13,44 @@ import java.util.Optional;
 public class VersionInformation {
     private final int size;
     private final int version;
+    private static final int generator=0b1111100100101_00000;
+    private Optional<EmptyQrCodeCell[][]> cachedEmptyQRCode;
+    private final Optional<Integer> versionBits;
     private VersionInformation(int size,int version){
         this.size=size;
         this.version=version;
+        cachedEmptyQRCode=Optional.empty();
+        if (version<=6)versionBits=Optional.empty();
+        else versionBits=Optional.of(calculateVersionBits());
     }
-    public List<Integer> getAlignmentPatterns(){
+    private int calculateVersionBits(){
+        int version=this.version;
+        boolean keep_generating=true;
+        int bits=0;
+        int leftZeros = 0;
+        int i = 5;
+        while (!Binary.readPosition(version, i)) {
+            i--;
+            leftZeros += 1;
+        }
+        while (keep_generating) {
+            int correctly_paddedGenerator = generator >>> leftZeros;
+            while (!Binary.readPosition(version, 17 - leftZeros)) version <<= 1;
+            bits = version ^ correctly_paddedGenerator;
+            keep_generating=false;
+            for (int j = 12; j < 18; j++) {
+                if (Binary.readPosition(bits, j)) {
+                    keep_generating = true;
+                    leftZeros=17-j;
+                    break;
+                }
+            }
+            version=bits;
+        }
+        bits+=4096*this.version;
+        return bits;
+    }
+    private List<Integer> getAlignmentCoords(){
         return switch (version){
             case 2->List.of(6,18);
             case 3->List.of(6,22);
@@ -55,6 +94,43 @@ public class VersionInformation {
             default -> Collections.emptyList();
         };
     }
+    public List<Pair<Integer,Integer>> getAlignmentPatterns(){
+        List<Pair<Integer,Integer>> alignments=new ArrayList<>();
+        List<Integer> coords= getAlignmentCoords();
+        for (var i :
+                coords) {
+            for (var j :
+                    coords) {
+                if ((i > 8 || (j > 8 && j < size - 8)) && (i < size - 8 || j > 8)) {
+                    alignments.add(new Pair<>(i,j));
+                }
+            }
+        }
+        return alignments;
+    }
+
+    public EmptyQrCodeCell[][] getEmptyQRCode(){
+        if (cachedEmptyQRCode.isPresent())return cachedEmptyQRCode.get();
+        EmptyQrCodeCell[][] emptyQRCode=new EmptyQrCodeCell[size][size];
+        QRCodePlacer.placeFinder(emptyQRCode,0,0);
+        QRCodePlacer.placeFinder(emptyQRCode,size-8,0);
+        QRCodePlacer.placeFinder(emptyQRCode,0,size-8);
+        List<Pair<Integer,Integer>> alignments= getAlignmentPatterns();
+        for (var pair :
+                alignments) {
+            QRCodePlacer.placeAlignment(emptyQRCode,pair.getFirst(),pair.getSecond());
+        }
+        QRCodePlacer.placeTimings(emptyQRCode);
+        QRCodePlacer.placeRectangle(emptyQRCode,8,size-8,1,1,EmptyQrCodeCell.ON);
+        QRCodePlacer.preMarkFormatInformation(emptyQRCode);
+        versionBits.ifPresent(integer -> QRCodePlacer.placeVersionInformation(emptyQRCode, integer));
+        cachedEmptyQRCode=Optional.of(emptyQRCode);
+        return emptyQRCode;
+    }
+
+    public Optional<Integer> getVersionBits(){
+        return versionBits;
+    }
     public int getSize(){
         return size;
     }
@@ -71,4 +147,17 @@ public class VersionInformation {
         if (version<1||version>40)return Optional.empty();
         return Optional.of(new VersionInformation(version*4+21,version));
     }
+
+    public static Optional<VersionInformation> ofBits(int bits){
+        int version=bits>>>12;
+        if (version>=40){
+            return Optional.empty();
+        }
+        Optional<VersionInformation> versionInformation=VersionInformation.ofVersion(version);
+        if (versionInformation.isEmpty())return Optional.empty();
+        Optional<Integer> otherVersionBits=versionInformation.get().getVersionBits();
+        if (otherVersionBits.isEmpty()||otherVersionBits.get()!=bits)return Optional.empty();
+        return versionInformation;
+    }
+
 }

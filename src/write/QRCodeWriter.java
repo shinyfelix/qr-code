@@ -7,6 +7,7 @@ import qr_code.QRCode;
 public class QRCodeWriter {
     public static QRCode write(String input, ErrorCorrectionLevel errorCorrectionLevel){
         EncodingType encodingType=EncodingType.getBestEncodingType(input);
+        int charCount=input.length();
 
         throw new UnsupportedOperationException();
     }

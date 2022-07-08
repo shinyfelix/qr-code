@@ -217,5 +217,4 @@ public class VersionInformation {
             case NUMERIC, ALPHANUMERIC, KANJI -> 0;
         });
     }
-
 }

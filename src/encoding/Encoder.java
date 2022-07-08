@@ -4,6 +4,7 @@ import jdk.jshell.execution.Util;
 import utils.Binary;
 import utils.Utils;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -91,7 +92,7 @@ public class Encoder {
         };
     }
     private static byte[] bytes(String input){
-        throw new UnsupportedOperationException();
+        return input.getBytes(StandardCharsets.ISO_8859_1);
     }
     private static byte[] kanji(String input){
         throw new UnsupportedOperationException();

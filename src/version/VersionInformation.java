@@ -1,5 +1,7 @@
 package version;
 
+import encoding.EncodingType;
+import error_correction.ErrorCorrectionLevel;
 import utils.Binary;
 import utils.EmptyQrCodeCell;
 import utils.Pair;
@@ -155,6 +157,69 @@ public class VersionInformation {
         Optional<Integer> otherVersionBits=versionInformation.get().getVersionBits();
         if (otherVersionBits.isEmpty()||otherVersionBits.get()!=bits)return Optional.empty();
         return versionInformation;
+    }
+
+    public static Optional<VersionInformation> ofCharacterCount(int count, EncodingType encodingType, ErrorCorrectionLevel errorCorrectionLevel){
+        return ofVersion(switch (encodingType){
+            case BYTE -> switch (errorCorrectionLevel){
+                case H -> {
+                    if (count<=7)yield 1;
+                    if (count<=14)yield 2;
+                    if (count<=24)yield 3;
+                    if (count<=34)yield 4;
+                    if (count<=44)yield 5;
+
+                    if (count<=58)yield 6;
+                    if (count<=64)yield 7;
+                    if (count<=84)yield 8;
+                    if (count<=98)yield 9;
+                    if (count<=119)yield 10;
+
+                    if (count<=137)yield 11;
+                    if (count<=155)yield 12;
+                    if (count<=177)yield 13;
+                    if (count<=194)yield 14;
+                    if (count<=220)yield 15;
+
+                    if (count<=250)yield 16;
+                    if (count<=280)yield 17;
+                    if (count<=310)yield 18;
+                    if (count<=338)yield 19;
+                    if (count<=382)yield 20;
+
+                    if (count<=403)yield 21;
+                    if (count<=439)yield 22;
+                    if (count<=461)yield 23;
+                    if (count<=511)yield 24;
+                    if (count<=535)yield 25;
+
+                    if (count<=593)yield 26;
+                    if (count<=625)yield 27;
+                    if (count<=658)yield 28;
+                    if (count<=698)yield 29;
+                    if (count<=742)yield 30;
+
+                    if (count<=790)yield 31;
+                    if (count<=842)yield 32;
+                    if (count<=898)yield 33;
+                    if (count<=958)yield 34;
+                    if (count<=983)yield 35;
+
+                    if (count<=1051)yield 36;
+                    if (count<=1093)yield 37;
+                    if (count<=1139)yield 38;
+                    if (count<=1219)yield 39;
+                    if (count<=1273)yield 40;
+                    yield 0;
+                }
+                case L -> {yield 0;}
+                case M -> {yield 0;}
+                case Q -> {yield 0;}
+            };
+            case NUMERIC -> 0;
+            case ALPHANUMERIC -> 0;
+            case KANJI -> 0;
+        });
     }
 
 }

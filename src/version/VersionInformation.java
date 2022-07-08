@@ -114,6 +114,7 @@ public class VersionInformation {
     public EmptyQrCodeCell[][] getEmptyQRCode(){
         if (cachedEmptyQRCode.isPresent())return cachedEmptyQRCode.get();
         EmptyQrCodeCell[][] emptyQRCode=new EmptyQrCodeCell[size][size];
+        QRCodePlacer.fillWithEmpty(emptyQRCode);
         QRCodePlacer.placeFinder(emptyQRCode,0,0);
         QRCodePlacer.placeFinder(emptyQRCode,size-8,0);
         QRCodePlacer.placeFinder(emptyQRCode,0,size-8);

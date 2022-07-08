@@ -150,9 +150,6 @@ public class VersionInformation {
 
     public static Optional<VersionInformation> ofBits(int bits){
         int version=bits>>>12;
-        if (version>=40){
-            return Optional.empty();
-        }
         Optional<VersionInformation> versionInformation=VersionInformation.ofVersion(version);
         if (versionInformation.isEmpty())return Optional.empty();
         Optional<Integer> otherVersionBits=versionInformation.get().getVersionBits();

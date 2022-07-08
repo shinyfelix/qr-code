@@ -1,11 +1,13 @@
 package write;
 
+import encoding.EncodingType;
 import error_correction.ErrorCorrectionLevel;
-
-import java.awt.image.BufferedImage;
+import qr_code.QRCode;
 
 public class QRCodeWriter {
-    public static BufferedImage write(byte[] input, ErrorCorrectionLevel errorCorrectionLevel){
+    public static QRCode write(String input, ErrorCorrectionLevel errorCorrectionLevel){
+        EncodingType encodingType=EncodingType.getBestEncodingType(input);
+
         throw new UnsupportedOperationException();
     }
 }

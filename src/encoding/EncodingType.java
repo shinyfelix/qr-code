@@ -1,18 +1,17 @@
 package encoding;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public enum EncodingType {
     NUMERIC((byte)0b1),
     ALPHANUMERIC((byte)0b10),
     BYTE((byte)0b100),
-    KANJI((byte)0b1000),
-    STRUCTURED_APPEND((byte)0b11),
-    ECI((byte) 0b111),
-    FNC1_FIRST_POS((byte) 0b101),
-    FNC1_SECOND_POS((byte) 0b1001),
-    END_OF_MESSAGE((byte) 0);
+    KANJI((byte)0b1000);
     private final byte code;
+    private static final Pattern NUMERIC_PATTERN=Pattern.compile("\\d+");
+    private static final Pattern ALPHANUMERIC_PATTERN=Pattern.compile("[\\d\\p{Upper} $%*+\\-./:]+");
     EncodingType(byte code){
         this.code=code;
     }
@@ -25,12 +24,14 @@ public enum EncodingType {
             case 0b10->Optional.of(ALPHANUMERIC);
             case 0b100->Optional.of(BYTE);
             case 0b1000->Optional.of(KANJI);
-            case 0b11->Optional.of(STRUCTURED_APPEND);
-            case 0b111->Optional.of(ECI);
-            case 0b101->Optional.of(FNC1_FIRST_POS);
-            case 0b1001->Optional.of(FNC1_SECOND_POS);
-            case 0->Optional.of(END_OF_MESSAGE);
             default -> Optional.empty();
         };
+    }
+    public static EncodingType getBestEncodingType(String input){
+        Matcher numericMatcher=NUMERIC_PATTERN.matcher(input);
+        if (numericMatcher.matches())return NUMERIC;
+        Matcher alphanumericMatcher=ALPHANUMERIC_PATTERN.matcher(input);
+        if (alphanumericMatcher.matches())return ALPHANUMERIC;
+        return BYTE;
     }
 }

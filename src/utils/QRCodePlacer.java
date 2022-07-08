@@ -1,11 +1,14 @@
 package utils;
 
 public class QRCodePlacer {
+    public static void fillWithEmpty(EmptyQrCodeCell[][] emptyQrCodeCells){
+        placeRectangle(emptyQrCodeCells,0,0,emptyQrCodeCells.length,emptyQrCodeCells.length,EmptyQrCodeCell.EMPTY);
+    }
     public static void placeFinder(EmptyQrCodeCell[][] emptyQrCodeCells,int x,int y){
         placeRectangle(emptyQrCodeCells,x,y,8,8,EmptyQrCodeCell.OFF);
         placeRectangle(emptyQrCodeCells,x,y,7,7,EmptyQrCodeCell.ON);
         placeRectangle(emptyQrCodeCells,x+1,y+1,5,5,EmptyQrCodeCell.OFF);
-        placeRectangle(emptyQrCodeCells,x+2,+3,3,3,EmptyQrCodeCell.ON);
+        placeRectangle(emptyQrCodeCells,x+2,+2,3,3,EmptyQrCodeCell.ON);
     }
     public static void placeAlignment(EmptyQrCodeCell[][] emptyQrCodeCells,int x,int y){
         placeRectangle(emptyQrCodeCells,x,y,5,5,EmptyQrCodeCell.ON);

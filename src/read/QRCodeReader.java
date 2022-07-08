@@ -1,9 +1,10 @@
 package read;
 
-import java.awt.image.BufferedImage;
+import qr_code.QRCode;
+
 
 public class QRCodeReader {
-    public static byte[] read(BufferedImage bufferedImage){
+    public static byte[] read(QRCode qrCode){
         throw new UnsupportedOperationException();
     }
 }

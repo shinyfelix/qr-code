@@ -212,13 +212,9 @@ public class VersionInformation {
                     if (count<=1273)yield 40;
                     yield 0;
                 }
-                case L -> {yield 0;}
-                case M -> {yield 0;}
-                case Q -> {yield 0;}
+                case L, M, Q -> 0;
             };
-            case NUMERIC -> 0;
-            case ALPHANUMERIC -> 0;
-            case KANJI -> 0;
+            case NUMERIC, ALPHANUMERIC, KANJI -> 0;
         });
     }
 

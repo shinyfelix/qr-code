@@ -1,7 +1,12 @@
 package utils;
 
 import org.junit.jupiter.api.Test;
+import version.VersionInformation;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -77,15 +82,31 @@ class QRCodePlacerTest {
 
     @Test
     void placeTimings() {
-
+        EmptyQrCodeCell[][] empty=new EmptyQrCodeCell[21][21];
+        QRCodePlacer.fillWithEmpty(empty);
+        QRCodePlacer.placeTimings(empty);
+        EmptyQrCodeCell[][] expected=readQRCode("test/utils/timing.test");
+        assertTrue(Arrays.deepEquals(empty,expected));
     }
 
     @Test
     void preMarkFormatInformation() {
+        EmptyQrCodeCell[][] empty=new EmptyQrCodeCell[19][19];
+        QRCodePlacer.fillWithEmpty(empty);
+        QRCodePlacer.preMarkFormatInformation(empty);
+        EmptyQrCodeCell[][] expected=readQRCode("test/utils/format.test");
+        assertTrue(Arrays.deepEquals(empty,expected));
     }
 
     @Test
     void placeVersionInformation() {
+        VersionInformation versionInformation=VersionInformation.ofVersion(7).get();
+        int bits=versionInformation.getVersionBits().get();
+        EmptyQrCodeCell[][] empty=new EmptyQrCodeCell[21][21];
+        QRCodePlacer.fillWithEmpty(empty);
+        QRCodePlacer.placeVersionInformation(empty,bits);
+        EmptyQrCodeCell[][] expected=readQRCode("test/utils/version.test");
+        assertTrue(Arrays.deepEquals(empty,expected));
     }
 
     @Test
@@ -105,5 +126,34 @@ class QRCodePlacerTest {
                 },
         };
         assertTrue(Arrays.deepEquals(empty,expected));
+    }
+    public static EmptyQrCodeCell[][] readQRCode(String filename){
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
+            String line=bufferedReader.readLine();
+            EmptyQrCodeCell[][] emptyQrCodeCells=new EmptyQrCodeCell[line.length()][line.length()];
+            for (int i = 0; i < line.length(); i++) {
+                emptyQrCodeCells[i][0]=switch (line.charAt(i)){
+                    case 'n'->ON;
+                    case 'f'->OFF;
+                    case 'p'->PRE_MARK;
+                    default -> EMPTY;
+                };
+            }
+            for (int i = 1; i <line.length() ; i++) {
+                line=bufferedReader.readLine();
+                for (int j = 0; j < line.length(); j++) {
+                    emptyQrCodeCells[j][i]=switch (line.charAt(j)){
+                        case 'n'->ON;
+                        case 'f'->OFF;
+                        case 'p'->PRE_MARK;
+                        default -> EMPTY;
+                    };
+                }
+            }
+            return emptyQrCodeCells;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

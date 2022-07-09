@@ -116,8 +116,8 @@ public class VersionInformation {
         EmptyQrCodeCell[][] emptyQRCode=new EmptyQrCodeCell[size][size];
         QRCodePlacer.fillWithEmpty(emptyQRCode);
         QRCodePlacer.placeFinder(emptyQRCode,0,0);
-        QRCodePlacer.placeFinder(emptyQRCode,size-8,0);
-        QRCodePlacer.placeFinder(emptyQRCode,0,size-8);
+        QRCodePlacer.placeFinder(emptyQRCode,size-7,0);
+        QRCodePlacer.placeFinder(emptyQRCode,0,size-7);
         List<Pair<Integer,Integer>> alignments= getAlignmentPatterns();
         for (var pair :
                 alignments) {
@@ -127,6 +127,7 @@ public class VersionInformation {
         QRCodePlacer.placeRectangle(emptyQRCode,8,size-8,1,1,EmptyQrCodeCell.ON);
         QRCodePlacer.preMarkFormatInformation(emptyQRCode);
         versionBits.ifPresent(integer -> QRCodePlacer.placeVersionInformation(emptyQRCode, integer));
+        //TODO mutable!!
         cachedEmptyQRCode=Optional.of(emptyQRCode);
         return emptyQRCode;
     }
@@ -141,14 +142,14 @@ public class VersionInformation {
         return version;
     }
     public static Optional<VersionInformation> ofSize(int size){
-        if ((size-21)%4!=0)return Optional.empty();
-        int version=(size-21)/4;
+        if ((size-1)%4!=0)return Optional.empty();
+        int version=(size-17)/4;
         if (version<1||version>40)return Optional.empty();
         return Optional.of(new VersionInformation(size,version));
     }
     public static Optional<VersionInformation> ofVersion(int version){
         if (version<1||version>40)return Optional.empty();
-        return Optional.of(new VersionInformation(version*4+21,version));
+        return Optional.of(new VersionInformation(version*4+17,version));
     }
 
     public static Optional<VersionInformation> ofBits(int bits){

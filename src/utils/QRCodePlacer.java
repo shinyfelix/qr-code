@@ -5,10 +5,10 @@ public class QRCodePlacer {
         placeRectangle(emptyQrCodeCells,0,0,emptyQrCodeCells.length,emptyQrCodeCells.length,EmptyQrCodeCell.EMPTY);
     }
     public static void placeFinder(EmptyQrCodeCell[][] emptyQrCodeCells,int x,int y){
-        placeRectangle(emptyQrCodeCells,x,y,8,8,EmptyQrCodeCell.OFF);
+        tryPlaceRectangle(emptyQrCodeCells,x-1,y-1,9,9,EmptyQrCodeCell.OFF);
         placeRectangle(emptyQrCodeCells,x,y,7,7,EmptyQrCodeCell.ON);
         placeRectangle(emptyQrCodeCells,x+1,y+1,5,5,EmptyQrCodeCell.OFF);
-        placeRectangle(emptyQrCodeCells,x+2,+2,3,3,EmptyQrCodeCell.ON);
+        placeRectangle(emptyQrCodeCells,x+2,y+2,3,3,EmptyQrCodeCell.ON);
     }
     public static void placeAlignment(EmptyQrCodeCell[][] emptyQrCodeCells,int x,int y){
         placeRectangle(emptyQrCodeCells,x,y,5,5,EmptyQrCodeCell.ON);
@@ -40,6 +40,14 @@ public class QRCodePlacer {
         for (int i = x; i <x+width ; i++) {
             for (int j = y; j <y+height ; j++) {
                 emptyQrCodeCells[i][j]=type;
+            }
+        }
+    }
+    public static void tryPlaceRectangle(EmptyQrCodeCell[][] emptyQrCodeCells,int x,int y,int width,int height,EmptyQrCodeCell type){
+        for (int i = x; i <x+width ; i++) {
+            for (int j = y; j <y+height ; j++) {
+                if (i<emptyQrCodeCells.length&&i>=0&&j<emptyQrCodeCells.length&&j>=0)
+                    emptyQrCodeCells[i][j]=type;
             }
         }
     }

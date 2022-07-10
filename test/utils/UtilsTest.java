@@ -1,6 +1,7 @@
 package utils;
 
 import org.junit.jupiter.api.Test;
+import testutil.TestUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,11 +12,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class UtilsTest {
     @Test
     public void tryParseInt(){
-        Optional<Integer> optional=Utils.tryParseInt("123");
-        assertTrue(optional.isPresent());
-        assertEquals(123,optional.get());
-        optional=Utils.tryParseInt("aaa212");
-        assertTrue(optional.isEmpty());
+        int number= TestUtil.assertAndGet(Utils.tryParseInt("123"));
+        assertEquals(123,number);
+        TestUtil.assertNotPresent(Utils.tryParseInt("aaa212"));
     }
 
     @Test

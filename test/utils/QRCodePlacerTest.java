@@ -97,8 +97,8 @@ public class QRCodePlacerTest {
 
     @Test
     void placeVersionInformation() {
-        VersionInformation versionInformation=VersionInformation.ofVersion(7).get();
-        int bits=versionInformation.getVersionBits().get();
+        VersionInformation versionInformation=TestUtil.assertAndGet(VersionInformation.ofVersion(7));
+        int bits=TestUtil.assertAndGet(versionInformation.getVersionBits());
         EmptyQrCodeCell[][] empty=new EmptyQrCodeCell[21][21];
         QRCodePlacer.fillWithEmpty(empty);
         QRCodePlacer.placeVersionInformation(empty,bits);

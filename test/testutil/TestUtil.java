@@ -15,6 +15,9 @@ public class TestUtil {
         assertTrue(optional.isPresent());
         return optional.get();
     }
+    public static void assertNotPresent(Optional<?> optional){
+        assertTrue(optional.isEmpty());
+    }
 
     public static EmptyQrCodeCell[][] readQRCode(String filename){
         try {

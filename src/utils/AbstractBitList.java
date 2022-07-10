@@ -185,9 +185,9 @@ public abstract class AbstractBitList implements BitList{
             @Override
             public Boolean next() {
                 if (!hasNext())throw new NoSuchElementException("No more elements");
-                position++;
                 Optional<Boolean> bit=readBit(position);
                 assert bit.isPresent();
+                position++;
                 return bit.get();
             }
         };

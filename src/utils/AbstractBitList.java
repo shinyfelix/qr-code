@@ -82,7 +82,7 @@ public abstract class AbstractBitList implements BitList{
     @Override
     public boolean writeLSBits(int position, int bits, int amount) {
         for (int i = 0; i < amount; i++) {
-            if (!writeBit(position+i,Binary.readPosition(bits,amount-i))){
+            if (!writeBit(position+i,Binary.readPosition(bits,amount-i-1))){
                 return false;
             }
         }
@@ -95,7 +95,7 @@ public abstract class AbstractBitList implements BitList{
         for (int i = 0; i < amount; i++) {
             var optional=readBit(position+i);
             if (optional.isEmpty())return Optional.empty();
-            if (optional.get())result=Binary.writePosition(result,amount-i,true);
+            if (optional.get())result=Binary.writePosition(result,amount-1-i,true);
         }
         return Optional.of(result);
     }
@@ -124,7 +124,7 @@ public abstract class AbstractBitList implements BitList{
     @Override
     public void appendLSB(int bits, int amount) {
         for (int i = 0; i < amount; i++) {
-            append(Binary.readPosition(bits,amount-i));
+            append(Binary.readPosition(bits,amount-1-i));
         }
     }
 
@@ -143,7 +143,7 @@ public abstract class AbstractBitList implements BitList{
     @Override
     public byte[] toByteArray() {
         int size=size();
-        byte[] bytes=new byte[size/8+size%8==0?0:1];
+        byte[] bytes=new byte[size/8+(size%8==0?0:1)];
         for (int i = 0; i < size/8; i++) {
             Optional<Byte> bits=readBits_byte(i*8);
             assert bits.isPresent();
@@ -160,7 +160,7 @@ public abstract class AbstractBitList implements BitList{
     @Override
     public int[] toIntArray(){
         int size=size();
-        int[] ints=new int[size/32+size%32==0?0:1];
+        int[] ints=new int[size/32+(size%32==0?0:1)];
         for (int i = 0; i < size/32; i++) {
             Optional<Integer> bits=readBits_int(i*32);
             assert bits.isPresent();

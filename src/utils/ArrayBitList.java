@@ -46,4 +46,10 @@ public class ArrayBitList extends AbstractBitList{
     public int size() {
         return size;
     }
+
+    @Override
+    public void clear() {
+        list.clear();
+        size=0;
+    }
 }

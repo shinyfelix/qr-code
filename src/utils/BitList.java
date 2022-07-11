@@ -189,5 +189,12 @@ public interface BitList extends Iterable<Boolean>{
     @Override
     String toString();
 
-
+    static BitList of(byte[] bytes){
+        BitList bitList=new ArrayBitList();
+        for (var b :
+                bytes) {
+            bitList.append(b);
+        }
+        return bitList;
+    }
 }

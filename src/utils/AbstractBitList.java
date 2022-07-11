@@ -13,6 +13,8 @@ public abstract class AbstractBitList implements BitList{
     public abstract void append(boolean bit);
     @Override
     public abstract int size();
+    @Override
+    public abstract void clear();
 
     @Override
     public boolean writeBits(int position, int bits) {

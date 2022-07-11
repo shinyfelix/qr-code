@@ -176,6 +176,11 @@ public interface BitList extends Iterable<Boolean>{
      */
     int size();
 
+    /**
+     * Clears the entire BitLists content.
+     */
+    void clear();
+
 
     /**
      *

@@ -5,10 +5,25 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 public abstract class AbstractBitList implements BitList{
+    /**
+     * Write a bit in the list at the specified position
+     * @implSpec This operation should only fail (and return false), when position is greater or equal to the current size (returned by the size method)
+     * @param position the position you want to write the bit at
+     * @param bit the bit you want to write
+     * @return whether the action was a success
+     */
     @Override
     public abstract boolean writeBit(int position,boolean bit);
+
+    /**
+     * Read a bit at the specified position
+     * @implSpec This operation should only fail (and return false), when position is greater or equal to the current size (returned by the size method)
+     * @param position the position you want to read the bit at
+     * @return the result if the action was a success. An empty Optional else.
+     */
     @Override
     public abstract Optional<Boolean> readBit(int position);
+
     @Override
     public abstract void append(boolean bit);
     @Override
@@ -18,9 +33,10 @@ public abstract class AbstractBitList implements BitList{
 
     @Override
     public boolean writeBits(int position, int bits) {
+        if (position+31>=size())return false;
         for (int i = 0; i < 32; i++) {
             if (!writeBit(position+i,Binary.readPosition(bits,31-i))){
-                return false;
+                throw new ContractViolationException("Failed write operation, even though size>position");
             }
         }
         return true;
@@ -28,20 +44,22 @@ public abstract class AbstractBitList implements BitList{
 
     @Override
     public Optional<Integer> readBits_int(int position) {
+        if (position+31>=size())return Optional.empty();
         int result=0;
         for (int i = 0; i < 32; i++) {
             var optional=readBit(position+i);
-            if (optional.isEmpty())return Optional.empty();
-            if (optional.get())result=Binary.writePosition(result,31-i,true);
+            if (optional.orElseThrow(()->new ContractViolationException("Failed read operation, even though size>position")))
+                result=Binary.writePosition(result,31-i,true);
         }
         return Optional.of(result);
     }
 
     @Override
     public boolean writeBits(int position, byte bits) {
+        if (position+7>=size())return false;
         for (int i = 0; i < 8; i++) {
             if (!writeBit(position+i,Binary.readPosition(bits,7-i))){
-                return false;
+                throw new ContractViolationException("Failed write operation, even though size>position");
             }
         }
         return true;
@@ -52,17 +70,18 @@ public abstract class AbstractBitList implements BitList{
         byte result=0;
         for (int i = 0; i < 8; i++) {
             var optional=readBit(position+i);
-            if (optional.isEmpty())return Optional.empty();
-            if (optional.get())result=Binary.writePosition(result,7-i,true);
+            if (optional.orElseThrow(()->new ContractViolationException("Failed read operation, even though size>position")))
+                result=Binary.writePosition(result,7-i,true);
         }
         return Optional.of(result);
     }
 
     @Override
     public boolean writeMSBits(int position, int bits, int amount) {
+        if (position+amount-1>size())return false;
         for (int i = 0; i < amount; i++) {
             if (!writeBit(position+i,Binary.readPosition(bits,31-i))){
-                return false;
+                throw new ContractViolationException("Failed write operation, even though size>position");
             }
         }
         return true;
@@ -73,17 +92,18 @@ public abstract class AbstractBitList implements BitList{
         int result=0;
         for (int i = 0; i < amount; i++) {
             var optional=readBit(position+i);
-            if (optional.isEmpty())return Optional.empty();
-            if (optional.get())result=Binary.writePosition(result,31-i,true);
+            if (optional.orElseThrow(()->new ContractViolationException("Failed read operation, even though size>position")))
+                result=Binary.writePosition(result,31-i,true);
         }
         return Optional.of(result);
     }
 
     @Override
     public boolean writeLSBits(int position, int bits, int amount) {
+        if (position+amount-1>size())return false;
         for (int i = 0; i < amount; i++) {
             if (!writeBit(position+i,Binary.readPosition(bits,amount-i-1))){
-                return false;
+                throw new ContractViolationException("Failed write operation, even though size>position");
             }
         }
         return true;
@@ -94,8 +114,8 @@ public abstract class AbstractBitList implements BitList{
         int result=0;
         for (int i = 0; i < amount; i++) {
             var optional=readBit(position+i);
-            if (optional.isEmpty())return Optional.empty();
-            if (optional.get())result=Binary.writePosition(result,amount-1-i,true);
+            if (optional.orElseThrow(()->new ContractViolationException("Failed read operation, even though size>position")))
+                result=Binary.writePosition(result,amount-1-i,true);
         }
         return Optional.of(result);
     }
@@ -146,13 +166,17 @@ public abstract class AbstractBitList implements BitList{
         byte[] bytes=new byte[size/8+(size%8==0?0:1)];
         for (int i = 0; i < size/8; i++) {
             Optional<Byte> bits=readBits_byte(i*8);
-            assert bits.isPresent();
+            if (bits.isEmpty()){
+                throw new ContractViolationException("Failed read operation, even though size>position");
+            }
             bytes[i]=bits.get();
         }
         int rest=size%8;
         if (rest!=0){
             Optional<Integer> bits=readLSBits(size-size%8,size%8);
-            assert bits.isPresent();
+            if (bits.isEmpty()){
+                throw new ContractViolationException("Failed read operation, even though size>position");
+            }
             bytes[bytes.length-1]=(byte)(bits.get()<<(8-size%8));
         }
         return bytes;
@@ -163,13 +187,17 @@ public abstract class AbstractBitList implements BitList{
         int[] ints=new int[size/32+(size%32==0?0:1)];
         for (int i = 0; i < size/32; i++) {
             Optional<Integer> bits=readBits_int(i*32);
-            assert bits.isPresent();
+            if (bits.isEmpty()){
+                throw new ContractViolationException("Failed read operation, even though size>position");
+            }
             ints[i]=bits.get();
         }
         int rest=size%32;
         if (rest!=0){
             Optional<Integer> bits=readMSBits(size-size%32,size%32);
-            assert bits.isPresent();
+            if (bits.isEmpty()){
+                throw new ContractViolationException("Failed read operation, even though size>position");
+            }
             ints[ints.length-1]=bits.get();
         }
         return ints;
@@ -188,7 +216,9 @@ public abstract class AbstractBitList implements BitList{
             public Boolean next() {
                 if (!hasNext())throw new NoSuchElementException("No more elements");
                 Optional<Boolean> bit=readBit(position);
-                assert bit.isPresent();
+                if (bit.isEmpty()){
+                    throw new ContractViolationException("Failed read operation, even though size>position");
+                }
                 position++;
                 return bit.get();
             }

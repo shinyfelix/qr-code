@@ -1,6 +1,7 @@
 package version;
 
 import encoding.EncodingType;
+import error_correction.ErrorCorrectionInformation;
 import error_correction.ErrorCorrectionLevel;
 import utils.Binary;
 import utils.EmptyQrCodeCell;
@@ -95,6 +96,12 @@ public class VersionInformation {
             case 40->List.of(6,30,58,86,114,142,170);
             default -> Collections.emptyList();
         };
+    }
+    public int getCharacterCountBits(){
+        throw new UnsupportedOperationException();
+    }
+    public ErrorCorrectionInformation getErrorCorrectionInformation(ErrorCorrectionLevel errorCorrectionLevel,EncodingType encodingType){
+        throw new UnsupportedOperationException();
     }
     public List<Pair<Integer,Integer>> getAlignmentPatterns(){
         List<Pair<Integer,Integer>> alignments=new ArrayList<>();

@@ -1,7 +1,9 @@
 package encoding;
 
 import jdk.jshell.execution.Util;
+import utils.ArrayBitList;
 import utils.Binary;
+import utils.BitList;
 import utils.Utils;
 
 import java.nio.charset.StandardCharsets;
@@ -10,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Encoder {
-    public static byte[] encode(String input,EncodingType encodingType){
+    public static BitList encode(String input,EncodingType encodingType){
         return switch (encodingType){
             case NUMERIC -> numeric(input);
             case ALPHANUMERIC -> alphanumeric(input);
@@ -19,14 +21,12 @@ public class Encoder {
         };
     }
 
-    private static byte[] numeric(String input){
+    private static BitList numeric(String input){
         String[] split=new String[input.length()/3+input.length()%3==0?0:1];
         for (int i = 0; i < input.length(); i++) {
             split[i/3]+=input.charAt(i);
         }
-        List<Byte> bytes=new ArrayList<>();
-        int inBytePointer=0;
-        int bytePointer=0;
+        BitList bitList=new ArrayBitList();
         for (var s :
                 split) {
             int number=Integer.parseInt(s);
@@ -40,20 +40,16 @@ public class Encoder {
             else {
                 amount=7;
             }
-            var result=Binary.writeBits(bytes,bytePointer,inBytePointer,number,amount);
-            inBytePointer=result.inBytePointer();
-            bytePointer= result.bytePointer();
+            bitList.appendLSB(number,amount);
         }
-        return Utils.ByteListToByteArray(bytes);
+        return bitList;
     }
-    private static byte[] alphanumeric(String input){
+    private static BitList alphanumeric(String input){
         String[] split=new String[input.length()/2+input.length()%2];
         for (int i = 0; i < input.length(); i++) {
             split[i/2]+=input.charAt(i);
         }
-        List<Byte> bytes=new ArrayList<>();
-        int inBytePointer=0;
-        int bytePointer=0;
+        BitList bitList=new ArrayBitList();
         for (var s:split){
             int number;
             int amount;
@@ -65,11 +61,9 @@ public class Encoder {
                 number=calculateAlphaNumValue(s.charAt(0));
                 amount=6;
             }
-            var result=Binary.writeBits(bytes,bytePointer,inBytePointer,number,amount);
-            inBytePointer=result.inBytePointer();
-            bytePointer=result.bytePointer();
+            bitList.appendLSB(number,amount);
         }
-        return Utils.ByteListToByteArray(bytes);
+        return bitList;
     }
     private static int calculateAlphaNumValue(char c){
         if (c>='0'&&c<='9'){
@@ -91,10 +85,10 @@ public class Encoder {
             default -> throw new IllegalStateException();
         };
     }
-    private static byte[] bytes(String input){
-        return input.getBytes(StandardCharsets.ISO_8859_1);
+    private static BitList bytes(String input){
+        return BitList.of(input.getBytes(StandardCharsets.ISO_8859_1));
     }
-    private static byte[] kanji(String input){
+    private static BitList kanji(String input){
         throw new UnsupportedOperationException();
     }
 }

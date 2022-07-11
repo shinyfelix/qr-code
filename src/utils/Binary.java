@@ -18,10 +18,12 @@ public class Binary {
         else return (number & ~(1<<position));
     }
     public static boolean readPosition(int number,int position){
-        return (number&1<<position)!=0;
+        return ((number>>>position)&1)==1;
+        //return (number&1<<position)!=0;
     }
     public static boolean readPosition(byte number,int position){
-        return (number&1<<position)!=0;
+        return ((number>>>position)&1)==1;
+        //return (number&1<<position)!=0;
     }
     public static PointerResult writeBits(List<Byte> dest,int bytePointer,int inBytePointer,int bits,int amount){
         for (int i = amount-1; i>=0; i--) {

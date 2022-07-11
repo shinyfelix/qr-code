@@ -112,10 +112,10 @@ class ArrayBitListTest {
     @Test
     void toByteArray() {
         byte[] expected=new byte[]{
-                0b01110000,0b00000000,0b00000000,0b00000000
+                (byte) 0b11100000,0b00000000,0b00000000,0b00000000
         };
         BitList bitList=new ArrayBitList();
-        bitList.append(0b011100000000000000000000000000000);
+        bitList.append(0b11100000000000000000000000000000);
         byte[] actual=bitList.toByteArray();
         assertArrayEquals(expected,actual);
     }
@@ -123,10 +123,10 @@ class ArrayBitListTest {
     @Test
     void toIntArray() {
         int[] expected=new int[]{
-                0b011100000000000000000000000000000
+                0b11100000000000000000000000000000
         };
         BitList bitList=new ArrayBitList();
-        bitList.append((byte) 0b01110000);
+        bitList.append((byte) 0b11100000);
         int[] actual=bitList.toIntArray();
         assertArrayEquals(expected,actual);
     }
@@ -134,7 +134,7 @@ class ArrayBitListTest {
     @Test
     void iterator() {
         BitList bitList=new ArrayBitList();
-        bitList.append(Integer.MAX_VALUE);
+        bitList.append(-1);
         for (var b :
                 bitList) {
             assertTrue(b);

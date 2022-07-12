@@ -2,6 +2,7 @@ package write;
 
 import encoding.Encoder;
 import encoding.EncodingType;
+import error_correction.ErrorCorrection;
 import error_correction.ErrorCorrectionInformation;
 import error_correction.ErrorCorrectionLevel;
 import qr_code.QRCode;
@@ -19,6 +20,21 @@ public class QRCodeWriter {
         bits.appendLSB(charCount,versionInformation.getCharacterCountBits());
         bits.append(Encoder.encode(input,encodingType));
         ErrorCorrectionInformation errorCorrectionInformation= versionInformation.getErrorCorrectionInformation(errorCorrectionLevel,encodingType);
-        throw new UnsupportedOperationException();
+        int oldSize=bits.size();
+        int pads=errorCorrectionInformation.getCodeWordsAmount()*8-oldSize;
+        bits.appendZeros(pads);
+        int paddingBytes=pads/8;
+        boolean is17=false;
+        for (int i = oldSize/8; i <paddingBytes+oldSize/8 ; i++) {
+            if (is17)
+                bits.writeBits(i*8,(byte)17);
+            else bits.writeBits(i*8,(byte) 236);
+            is17=!is17;
+        }
+        BitList errorCorrection= ErrorCorrection.writeErrorCorrection(bits,errorCorrectionLevel);
+        BitList data=Shuffler.shuffle(bits,errorCorrection);
+        QRCode.Builder builder=QRCode.builder(versionInformation.getEmptyQRCode());
+        builder.enterData(data);
+        return builder.build();
     }
 }

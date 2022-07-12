@@ -1,5 +1,6 @@
 package qr_code;
 
+import utils.BitList;
 import utils.EmptyQrCodeCell;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ public class QRCode {
         private Builder(EmptyQrCodeCell[][] emptyQrCodeCells){
             this.emptyQrCodeCells=emptyQrCodeCells;
         }
-        public Builder enterData(byte[][] data){
+        public Builder enterData(BitList data){
             throw new UnsupportedOperationException();
         }
         public QRCode build(){

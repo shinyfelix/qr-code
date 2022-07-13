@@ -102,7 +102,46 @@ public class CharCountVersionTable {
         errorLNumeric.put(39,6743);
         errorLNumeric.put(40,7089);
 
-
+        errorMNumeric.put(1,34);
+        errorMNumeric.put(2,63);
+        errorMNumeric.put(3,101);
+        errorMNumeric.put(4,149);
+        errorMNumeric.put(5,202);
+        errorMNumeric.put(6,255);
+        errorMNumeric.put(7,293);
+        errorMNumeric.put(8,365);
+        errorMNumeric.put(9,432);
+        errorMNumeric.put(10,513);
+        errorMNumeric.put(11,604);
+        errorMNumeric.put(12,691);
+        errorMNumeric.put(13,796);
+        errorMNumeric.put(14,871);
+        errorMNumeric.put(15,991);
+        errorMNumeric.put(16,1082);
+        errorMNumeric.put(17,1212);
+        errorMNumeric.put(18,1346);
+        errorMNumeric.put(19,1500);
+        errorMNumeric.put(20,1600);
+        errorMNumeric.put(21,1708);
+        errorMNumeric.put(22,1872);
+        errorMNumeric.put(23,2059);
+        errorMNumeric.put(24,2188);
+        errorMNumeric.put(25,2395);
+        errorMNumeric.put(26,2544);
+        errorMNumeric.put(27,2701);
+        errorMNumeric.put(28,2857);
+        errorMNumeric.put(29,3036);
+        errorMNumeric.put(30,3289);
+        errorMNumeric.put(31,3486);
+        errorMNumeric.put(32,3693);
+        errorMNumeric.put(33,3909);
+        errorMNumeric.put(34,4134);
+        errorMNumeric.put(35,4343);
+        errorMNumeric.put(36,4588);
+        errorMNumeric.put(37,4775);
+        errorMNumeric.put(38,5039);
+        errorMNumeric.put(39,5313);
+        errorMNumeric.put(40,5569);
     }
     public static int getCharacterCount(int version, EncodingType encodingType, ErrorCorrectionLevel errorCorrectionLevel){
         return map.get(encodingType).get(errorCorrectionLevel).get(version);
